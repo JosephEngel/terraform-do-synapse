@@ -44,20 +44,32 @@ resource "digitalocean_firewall" "default" {
   }
 }
 
-resource "digitalocean_firewall" "web" {
-  name = "web"
+resource "digitalocean_firewall" "mail" {
+  name = "mail"
   droplet_ids = [digitalocean_droplet.centos-1.id]
-
+  
   inbound_rule {
     protocol         = "tcp"
-    port_range       = "80"
+    port_range       = "465"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
   inbound_rule {
-    protocol         = "tcp"
-    port_range       = "443"
+    protocol         = "udp"
+    port_range       = "587"
     source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol         = "tcp"
+    port_range       = "465"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol         = "udp"
+    port_range       = "587"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }
 
@@ -87,5 +99,22 @@ resource "digitalocean_firewall" "matrix" {
     protocol         = "udp"
     port_range       = "8448"
     destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+}
+
+resource "digitalocean_firewall" "web" {
+  name = "web"
+  droplet_ids = [digitalocean_droplet.centos-1.id]
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "80"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "443"
+    source_addresses = ["0.0.0.0/0", "::/0"]
   }
 }
